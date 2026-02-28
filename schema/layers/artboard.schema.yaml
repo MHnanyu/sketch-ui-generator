@@ -1,0 +1,40 @@
+title: Artboard Layer
+description:
+  Artboard layers are a document organisation aid. They have a fixed frame that
+  usually map to variations of device dimensions or viewport sizes
+allOf:
+  - $ref: ./abstract-root-layer.schema.yaml
+  # Note: Any changes must be replicated in symbol sources which share the
+  # data structure with artboards but their schemas are not currently set to
+  # inherit directly for simplicity of inheritence tree.
+  - type: object
+    optional:
+      - prototypeViewport
+    properties:
+      _class: { const: artboard }
+      backgroundColor: { $ref: ../objects/color.schema.yaml }
+      hasBackgroundColor: { type: boolean }
+      includeBackgroundColorInExport: { type: boolean }
+      isFlowHome: { type: boolean }
+      resizesContent: { type: boolean }
+      prototypeViewport: { $ref: ../objects/prototype-viewport.schema.yaml }
+      layers:
+        type: array
+        items:
+          oneOf:
+            - { $ref: ./group.schema.yaml }
+            - { $ref: ./oval.schema.yaml }
+            - { $ref: ./polygon.schema.yaml }
+            - { $ref: ./rectangle.schema.yaml }
+            - { $ref: ./shape-path.schema.yaml }
+            - { $ref: ./star.schema.yaml }
+            - { $ref: ./triangle.schema.yaml }
+            - { $ref: ./shape-group.schema.yaml }
+            - { $ref: ./text.schema.yaml }
+            - { $ref: ./symbol-instance.schema.yaml }
+            - { $ref: ./slice.schema.yaml }
+            - { $ref: ./hotspot.schema.yaml }
+            - { $ref: ./bitmap.schema.yaml }
+        description:
+          Artboards can contain any layer or layer group except root layers such
+          as other artboards and symbol sources
