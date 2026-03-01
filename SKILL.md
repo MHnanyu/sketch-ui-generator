@@ -180,7 +180,89 @@ console.log(result.folderPath);  // sketch-output/xxx/
 
 ---
 
+## 模块位置与层级检查
+
+在生成Sketch文件前，必须验证各模块的位置和层次关系，避免重叠或覆盖。
+
+### 1. 位置追踪系统
+
+ ```javascript
+const layoutValidator = require('./scripts/layout-validator.cjs');
+
+// 初始化布局验证器
+const validator = new layoutValidator({
+  artboardWidth: config.artboardSize.width,
+  artboardHeight: config.artboardSize.height,
+  padding: 16,  // 默认边距
+  moduleGap: 8   // 模块间距
+});
+
+// 添加模块（自动计算位置）
+config.modules.forEach((module, index) => {
+  validator.addModule({
+    id: module.type + '_' + index,
+    type: module.type,
+    height: module.height,
+    width: module.width || config.artboardSize.width
+  });
+});
+
+// 验证布局
+const result = validator.validate();
+if (result.hasOverlaps) {
+  console.warn('⚠️ 检测到模块重叠:', result.overlaps);
+  // 自动调整或报告错误
+}
+```
+
+### 2. 碰撞检测规则
+
+| 规则 | 说明 |
+|------|------|
+| 垂直重叠 | 模块A的底部 > 模块B的顶部，且A在B之前 |
+| 水平重叠 | 模块A的右边界 > 模块B的左边界 |
+| 边界溢出 | 模块超出画布边界 |
+| 层级覆盖 | 后添加的模块应置于上层 |
+
+### 3. 自动布局调整
+
+验证器支持自动修复：
+
+ ```javascript
+const result = validator.validate({
+  autoFix: true,  // 自动调整重叠模块
+  fixStrategy: 'stack'  // 堆叠/网格/瀑布流
+});
+
+console.log('调整后的模块位置:', result.modules);
+```
+
+### 4. 布局报告
+
+生成完成后，输出布局分析：
+
+布局分析实例：
+ ```
+📊 布局分析:
+  ✓ 画布尺寸: 393x852
+  ✓ 模块数量: 5
+  ✓ 无重叠/溢出
+  📐 模块位置:
+     - header: (0, 0) - 393x56
+     - hero: (0, 56) - 393x280
+     - features: (0, 336) - 393x120
+     - dataTable: (0, 456) - 393x300
+     - bottomNav: (0, 756) - 393x96
+```
+
+---
+
 ## 重要约束
+
+### 布局验证
+- **必须**在生成Sketch前运行布局验证
+- 如检测到重叠，优先尝试自动修复
+- 无法自动修复时，报告具体重叠模块供用户决策
 
 ### 输出目录
 - 必须使用 `exportSketch(config)` 不传第二个参数，使用默认输出目录 `workspace/sketch-output`

@@ -15,6 +15,7 @@ const {
 } = require('./sketch-generator.cjs');
 
 const { packSketch, getFileInfo } = require('./sketch-packer.cjs');
+const LayoutValidator = require('./layout-validator.cjs');
 
 /**
  * 生成 Sketch JSON - 主函数
