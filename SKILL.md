@@ -1,4 +1,4 @@
-﻿---
+---
 name: sketch-ui-generator
 description: 根据自然语言UI需求生成Sketch文件(.sketch)。用于用户请求生成Sketch设计文件、UI原型、Sketch文件导出，或任何涉及.sketch文件生成的任务。
 ---
